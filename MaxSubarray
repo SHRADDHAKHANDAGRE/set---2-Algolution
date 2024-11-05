@@ -1,0 +1,74 @@
+#include <iostream>
+using namespace std;
+
+const int MAX_SUM = 10000;
+const int OFFSET = MAX_SUM;
+
+int maxSubarray(int nums[], int n, int target)
+{
+
+    int sumIndex[2 * MAX_SUM + 1];
+    for (int i = 0; i < 2 * MAX_SUM + 1; ++i)
+    {
+        sumIndex[i] = -1;
+    }
+
+    int current_sum = 0;
+    int max_length = 0;
+    int start_index = -1;
+
+    for (int i = 0; i < n; ++i)
+    {
+        current_sum += nums[i];
+
+
+        if (current_sum == target)
+        {
+            max_length = i + 1;
+            start_index = 0;
+        }
+
+
+        if (sumIndex[current_sum - target + OFFSET] != -1)
+        {
+            int length = i - sumIndex[current_sum - target + OFFSET];
+            if (length > max_length) {
+                max_length = length;
+                start_index = sumIndex[current_sum - target + OFFSET] + 1;
+            }
+        }
+
+
+        if (sumIndex[current_sum + OFFSET] == -1)
+        {
+            sumIndex[current_sum + OFFSET] = i;
+        }
+    }
+
+
+    if (max_length > 0)
+    {
+        cout << "Longest subarray with sum " << target << ": { ";
+        for (int i = start_index; i < start_index + max_length; ++i)
+        {
+            cout << nums[i] << " ";
+        }
+        cout << "}" << std::endl;
+    }
+    else
+    {
+        cout << "No subarray found with sum " << target << std::endl;
+    }
+
+    return max_length;
+}
+
+int main()
+{
+    int nums[] = {5, 6, -5, 5, 3, 5, 3, -2, 0};
+    int target = 8;
+    int n = sizeof(nums) / sizeof(nums[0]);
+
+    maxSubarray(nums, n, target);
+    return 0;
+}
